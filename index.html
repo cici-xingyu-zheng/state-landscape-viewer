@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Interneuron energy landscapes</title>
+  <title>Interneuron state landscapes</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -21,10 +21,9 @@
   <main class="wrap" id="sections"></main>
 
   <footer class="foot">
-    <div class="wrap">Rotate, zoom, and hover any surface. Toggle populations from the legend inside each plot.</div>
+    <div class="wrap">Click a card to open its default view, or a chip to jump straight to that projection. Rotate, zoom, and hover any surface; toggle populations from the legend inside each plot.</div>
   </footer>
 
-  <!-- small well glyph reused per card; tinted by the section accent -->
   <template id="glyph">
     <svg class="glyph" width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
       <ellipse cx="20" cy="21" rx="16" ry="9"  stroke="currentColor" stroke-width="1" opacity=".35"/>
@@ -46,28 +45,33 @@
     for (const section of SITE.sections) {
       const sec = document.createElement("section");
       sec.className = "group accent-" + section.accent;
-      sec.innerHTML = `
-        <div class="group-head">
-          <div class="eyebrow">${section.eyebrow}</div>
-          <h2>${section.heading}</h2>
-          <p class="blurb">${section.blurb}</p>
-        </div>
-        <div class="cards"></div>`;
+      sec.innerHTML =
+        '<div class="group-head">' +
+          '<div class="eyebrow">' + section.eyebrow + '</div>' +
+          '<h2>' + section.heading + '</h2>' +
+          '<p class="blurb">' + section.blurb + '</p>' +
+        '</div>' +
+        '<div class="cards"></div>';
       const cards = sec.querySelector(".cards");
 
       for (const page of section.pages) {
+        const pid = encodeURIComponent(page.id);
         const pills = page.views
-          .map((v) => `<span class="pill">${v.label}</span>`)
+          .map(function (v, i) {
+            return '<a class="pill" href="view.html?p=' + pid + '&v=' + i + '">' + v.label + '</a>';
+          })
           .join("");
-        const a = document.createElement("a");
-        a.className = "card";
-        a.href = "view.html?p=" + encodeURIComponent(page.id);
-        a.innerHTML = `
-          ${glyphTpl}
-          <div class="name">${page.name}</div>
-          <div class="meta">${page.meta}</div>
-          <div class="pills">${pills}</div>`;
-        cards.appendChild(a);
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML =
+          '<a class="card-main" href="view.html?p=' + pid + '&v=0">' +
+            glyphTpl +
+            '<div class="name">' + page.name + '</div>' +
+            '<div class="meta">' + page.meta + '</div>' +
+          '</a>' +
+          '<div class="pills">' + pills + '</div>';
+        cards.appendChild(card);
       }
       root.appendChild(sec);
     }
