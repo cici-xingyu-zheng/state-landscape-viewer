@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Landscape viewer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="viewer">
+  <div class="topbar" id="topbar">
+    <a class="back" href="index.html">&larr; All landscapes</a>
+    <div class="titleblock">
+      <span class="ctx" id="ctx"></span>
+      <span class="pname" id="pname"></span>
+      <span class="hint" id="hint"></span>
+    </div>
+    <div class="picker">
+      <label for="view-select">Projection</label>
+      <select id="view-select"></select>
+    </div>
+  </div>
+
+  <div class="stage" id="stage"></div>
+
+  <script src="config.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const pageId = params.get("p");
+    const found = pageId ? findPage(pageId) : null;
+
+    const stage = document.getElementById("stage");
+
+    if (!found) {
+      document.getElementById("pname").textContent = "Not found";
+      stage.innerHTML =
+        '<div class="placeholder"><h3>Unknown landscape</h3>' +
+        '<p>No page matched this link. Head back to the <a href="index.html" style="text-decoration:underline">landing page</a>.</p></div>';
+    } else {
+      const { section, page } = found;
+      document.body.classList.add("accent-" + section.accent);
+      document.title = page.name + " \u2014 " + SITE.title;
+      document.getElementById("ctx").textContent = section.heading;
+      document.getElementById("pname").textContent = page.name;
+      if (page.hint) document.getElementById("hint").textContent = page.hint;
+
+      const select = document.getElementById("view-select");
+      page.views.forEach((v, i) => {
+        const opt = document.createElement("option");
+        opt.value = i;
+        opt.textContent = v.label;
+        select.appendChild(opt);
+      });
+
+      // default to ?v= index if valid, else the first view
+      let start = parseInt(params.get("v"), 10);
+      if (isNaN(start) || start < 0 || start >= page.views.length) start = 0;
+      select.value = start;
+
+      async function show(i) {
+        const view = page.views[i];
+        // reflect selection in the URL so a colleague can be sent this exact view
+        const url = new URL(location);
+        url.searchParams.set("v", i);
+        history.replaceState(null, "", url);
+
+        stage.innerHTML = "";
+        let ok = true;
+        try {
+          const res = await fetch(view.file, { method: "HEAD" });
+          ok = res.ok;
+        } catch (e) {
+          ok = null; // couldn't check (e.g. opened via file://) — try loading anyway
+        }
+
+        if (ok === false) {
+          stage.innerHTML =
+            '<div class="placeholder"><h3>This view isn\u2019t generated yet</h3>' +
+            "<p>Export it from your notebook and save it as<br><code>" +
+            view.file +
+            "</code><br>then refresh \u2014 it\u2019ll appear here automatically.</p></div>";
+          return;
+        }
+        const iframe = document.createElement("iframe");
+        iframe.src = view.file;
+        iframe.title = page.name + " \u2014 " + view.label;
+        iframe.loading = "eager";
+        stage.appendChild(iframe);
+      }
+
+      select.addEventListener("change", () => show(parseInt(select.value, 10)));
+      show(start);
+    }
+  </script>
+</body>
+</html>
