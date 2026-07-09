@@ -30,7 +30,6 @@
     const params = new URLSearchParams(location.search);
     const pageId = params.get("p");
     const found = pageId ? findPage(pageId) : null;
-
     const stage = document.getElementById("stage");
 
     if (!found) {
@@ -49,48 +48,47 @@
       const select = document.getElementById("view-select");
       page.views.forEach((v, i) => {
         const opt = document.createElement("option");
-        opt.value = i;
+        opt.value = String(i);
         opt.textContent = v.label;
         select.appendChild(opt);
       });
 
-      // default to ?v= index if valid, else the first view
       let start = parseInt(params.get("v"), 10);
       if (isNaN(start) || start < 0 || start >= page.views.length) start = 0;
-      select.value = start;
+      select.selectedIndex = start;
 
-      async function show(i) {
+      // Swap the plot FIRST and synchronously - nothing below can block it.
+      function show(i) {
         const view = page.views[i];
-        // reflect selection in the URL so a colleague can be sent this exact view
-        const url = new URL(location);
-        url.searchParams.set("v", i);
-        history.replaceState(null, "", url);
-
         stage.innerHTML = "";
-        let ok = true;
-        try {
-          const res = await fetch(view.file, { method: "HEAD" });
-          ok = res.ok;
-        } catch (e) {
-          ok = null; // couldn't check (e.g. opened via file://) — try loading anyway
-        }
-
-        if (ok === false) {
-          stage.innerHTML =
-            '<div class="placeholder"><h3>This view isn\u2019t generated yet</h3>' +
-            "<p>Export it from your notebook and save it as<br><code>" +
-            view.file +
-            "</code><br>then refresh \u2014 it\u2019ll appear here automatically.</p></div>";
-          return;
-        }
         const iframe = document.createElement("iframe");
         iframe.src = view.file;
         iframe.title = page.name + " \u2014 " + view.label;
-        iframe.loading = "eager";
         stage.appendChild(iframe);
+
+        // URL bookkeeping is guarded so a failure here can't stop the swap.
+        try {
+          const url = new URL(location);
+          url.searchParams.set("v", i);
+          history.replaceState(null, "", url);
+        } catch (e) { /* ignore */ }
+
+        // Non-blocking existence check: only shows a note if the file is missing.
+        fetch(view.file, { method: "HEAD" })
+          .then(function (r) {
+            if (!r.ok && select.selectedIndex === i) {
+              stage.innerHTML =
+                '<div class="placeholder"><h3>This view isn\u2019t generated yet</h3>' +
+                "<p>Save it as <code>" + view.file + "</code> and refresh.</p></div>";
+            }
+          })
+          .catch(function () { /* offline / file:// - leave the iframe as-is */ });
       }
 
-      select.addEventListener("change", () => show(parseInt(select.value, 10)));
+      // Two listeners for belt-and-suspenders across browsers.
+      select.addEventListener("change", function () { show(select.selectedIndex); });
+      select.addEventListener("input", function () { show(select.selectedIndex); });
+
       show(start);
     }
   </script>
