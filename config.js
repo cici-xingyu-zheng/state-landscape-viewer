@@ -7,14 +7,14 @@
 // ============================================================================
 
 const SITE = {
-  title: "Interneuron state landscapes",
-  subtitle: "Diffusion-map energy surfaces with cell populations projected on the bottom for the two diffusion axes viewed.",
+  title: "Interneuron cell type landscapes",
+  subtitle: "Diffusion-map energy surfaces with cell populations projected on the bottom for the two diffusion axes viewed (data source: Tasic, 2018).",
   equation: "U(S) = \u2212log q(S)",
 
   sections: [
     {
       id: "subclass",
-      eyebrow: "Grouping 1",
+      eyebrow: "Grouping Level 1",
       heading: "Subclass level",
       blurb: "Each landscape shows one interneuron subclass. Use the dropdown to change the diffusion-component projection.",
       accent: "teal",
@@ -39,8 +39,8 @@ const SITE = {
 
     {
       id: "origin",
-      eyebrow: "Grouping 2",
-      heading: "Same evolutionary origin",
+      eyebrow: "Grouping Level 2",
+      heading: "Same developemental origin",
       blurb: "Each landscape pools an entire eminence lineage. The dropdown changes the projection; switch coloring by subclass vs supertype with the buttons inside the plot.",
       accent: "amber",
       pages: [
