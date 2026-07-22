@@ -18,7 +18,8 @@ const SITE = {
   // replace href="#" with the paper URL when it's available.
   intro:
     'We apply the method developed in ' +
-    '<a href="#" target="_blank" rel="noopener">Zheng et al. 2026</a>' +
+    //'<a href="#" target="_blank" rel="noopener">Zheng et al. 2026</a>' +
+    'Zheng et al. 2026' +
     ' on Allen Brain datasets, including ' +
     '<a href="https://www.nature.com/articles/s41586-018-0654-5" target="_blank" rel="noopener">Tasic 2018</a>' +
     ' and ' +
