@@ -17,6 +17,10 @@
   --amber: #b0763a;
   --amber-tint: #f3ebdf;
 
+  /* default accent (used outside colored sections, e.g. the masthead) */
+  --accent: var(--teal);
+  --accent-tint: var(--teal-tint);
+
   --radius: 14px;
   --maxw: 1040px;
 }
@@ -61,10 +65,31 @@ a { color: inherit; text-decoration: none; }
 }
 .masthead p {
   margin: 0;
-  max-width: 56ch;
+  max-width: 62ch;
   color: var(--muted);
   font-size: 17px;
 }
+.masthead .intro a {
+  color: var(--teal);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.masthead-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+.dataset-picker { display: flex; align-items: center; gap: 9px; }
+.dataset-picker label {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.masthead-row .eq { margin-top: 0; margin-left: auto; }
 .eq {
   display: inline-block;
   margin-top: 20px;
@@ -193,7 +218,7 @@ body.viewer { display: flex; flex-direction: column; height: 100vh; overflow: hi
 
 .picker { margin-left: auto; display: flex; align-items: center; gap: 9px; }
 .picker label { font-size: 13px; color: var(--muted); }
-.picker select {
+.picker select, .dataset-picker select {
   font-family: "Inter", sans-serif;
   font-size: 14px;
   color: var(--ink);
@@ -206,7 +231,7 @@ body.viewer { display: flex; flex-direction: column; height: 100vh; overflow: hi
   -webkit-appearance: none; appearance: none;
   cursor: pointer;
 }
-.picker select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.picker select:focus-visible, .dataset-picker select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
 .stage {
   flex: 1 1 auto;

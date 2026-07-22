@@ -31,7 +31,9 @@
   <script>
     const params = new URLSearchParams(location.search);
     const pageId = params.get("p");
-    const found = pageId ? findPage(pageId) : null;
+    const dataset = getDataset(params.get("d"));
+    const sections = getSections(dataset);
+    const found = pageId ? findPage(sections, pageId) : null;
     const stage = document.getElementById("stage");
 
     if (!found) {
@@ -42,10 +44,12 @@
     } else {
       const { section, page } = found;
       document.body.classList.add("accent-" + section.accent);
-      document.title = page.name + " \u2014 " + SITE.title;
-      document.getElementById("ctx").textContent = section.heading;
+      document.title = page.name + " \u2014 " + dataset.name;
+      document.getElementById("ctx").textContent = dataset.name + " \u00b7 " + section.heading;
       document.getElementById("pname").textContent = page.name;
       if (page.hint) document.getElementById("hint").textContent = page.hint;
+      // keep the selected dataset when going back to the landing page
+      document.querySelector(".back").href = "index.html?d=" + encodeURIComponent(dataset.id);
 
       const instr = page.instructions || SITE.instructions;
       if (instr) {
@@ -55,7 +59,7 @@
       }
 
       const select = document.getElementById("view-select");
-      page.views.forEach((v, i) => {
+      page.views.forEach(function (v, i) {
         const opt = document.createElement("option");
         opt.value = String(i);
         opt.textContent = v.label;
@@ -69,10 +73,11 @@
       // Swap the plot FIRST and synchronously - nothing below can block it.
       function show(i) {
         const view = page.views[i];
+        const src = viewPath(dataset.id, view.file);
         stage.innerHTML = "";
         const iframe = document.createElement("iframe");
-        iframe.src = view.file;
-        iframe.title = page.name + " \u2014 " + view.label;
+        iframe.src = src;
+        iframe.title = dataset.name + " \u2014 " + page.name + " \u2014 " + view.label;
         stage.appendChild(iframe);
 
         // URL bookkeeping is guarded so a failure here can't stop the swap.
@@ -83,12 +88,12 @@
         } catch (e) { /* ignore */ }
 
         // Non-blocking existence check: only shows a note if the file is missing.
-        fetch(view.file, { method: "HEAD" })
+        fetch(src, { method: "HEAD" })
           .then(function (r) {
             if (!r.ok && select.selectedIndex === i) {
               stage.innerHTML =
                 '<div class="placeholder"><h3>This view isn\u2019t generated yet</h3>' +
-                "<p>Save it as <code>" + view.file + "</code> and refresh.</p></div>";
+                "<p>Save it as <code>" + src + "</code> and refresh.</p></div>";
             }
           })
           .catch(function () { /* offline / file:// - leave the iframe as-is */ });

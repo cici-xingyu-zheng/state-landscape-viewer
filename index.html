@@ -13,15 +13,21 @@
   <header class="masthead">
     <div class="wrap">
       <h1 id="site-title"></h1>
-      <p id="site-subtitle"></p>
-      <span class="eq mono" id="site-eq"></span>
+      <p class="intro" id="site-intro"></p>
+      <div class="masthead-row">
+        <div class="dataset-picker">
+          <label for="dataset-select">Dataset</label>
+          <select id="dataset-select"></select>
+        </div>
+        <span class="eq mono" id="site-eq"></span>
+      </div>
     </div>
   </header>
 
   <main class="wrap" id="sections"></main>
 
   <footer class="foot">
-    <div class="wrap">Click a card to open its default view, or a chip to jump straight to that projection. Rotate, zoom, and hover any surface; toggle populations from the legend inside each plot.</div>
+    <div class="wrap">Pick a dataset above, then click a card to open its default view or a chip to jump straight to that projection. Rotate, zoom, and hover any surface; toggle populations from the legend inside each plot.</div>
   </footer>
 
   <template id="glyph">
@@ -36,45 +42,76 @@
   <script src="config.js"></script>
   <script>
     document.getElementById("site-title").textContent = SITE.title;
-    document.getElementById("site-subtitle").textContent = SITE.subtitle;
+    document.getElementById("site-intro").innerHTML = SITE.intro;
     document.getElementById("site-eq").textContent = SITE.equation;
 
     const glyphTpl = document.getElementById("glyph").innerHTML;
     const root = document.getElementById("sections");
+    const dsSelect = document.getElementById("dataset-select");
 
-    for (const section of SITE.sections) {
-      const sec = document.createElement("section");
-      sec.className = "group accent-" + section.accent;
-      sec.innerHTML =
-        '<div class="group-head">' +
-          '<div class="eyebrow">' + section.eyebrow + '</div>' +
-          '<h2>' + section.heading + '</h2>' +
-          '<p class="blurb">' + section.blurb + '</p>' +
-        '</div>' +
-        '<div class="cards"></div>';
-      const cards = sec.querySelector(".cards");
+    // populate the dataset dropdown
+    SITE.datasets.forEach(function (d) {
+      const opt = document.createElement("option");
+      opt.value = d.id;
+      opt.textContent = d.name;
+      dsSelect.appendChild(opt);
+    });
 
-      for (const page of section.pages) {
-        const pid = encodeURIComponent(page.id);
-        const pills = page.views
-          .map(function (v, i) {
-            return '<a class="pill" href="view.html?p=' + pid + '&v=' + i + '">' + v.label + '</a>';
-          })
-          .join("");
-
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML =
-          '<a class="card-main" href="view.html?p=' + pid + '&v=0">' +
-            glyphTpl +
-            '<div class="name">' + page.name + '</div>' +
-            '<div class="meta">' + page.meta + '</div>' +
-          '</a>' +
-          '<div class="pills">' + pills + '</div>';
-        cards.appendChild(card);
-      }
-      root.appendChild(sec);
+    // initial dataset: ?d= if valid, otherwise the first one
+    const params = new URLSearchParams(location.search);
+    let activeId = params.get("d");
+    if (!SITE.datasets.some(function (d) { return d.id === activeId; })) {
+      activeId = SITE.datasets[0].id;
     }
+    dsSelect.value = activeId;
+
+    function renderSections(datasetId) {
+      root.innerHTML = "";
+      const sections = getSections(getDataset(datasetId));
+      for (const section of sections) {
+        const sec = document.createElement("section");
+        sec.className = "group accent-" + section.accent;
+        sec.innerHTML =
+          '<div class="group-head">' +
+            '<div class="eyebrow">' + section.eyebrow + '</div>' +
+            '<h2>' + section.heading + '</h2>' +
+            '<p class="blurb">' + section.blurb + '</p>' +
+          '</div>' +
+          '<div class="cards"></div>';
+        const cards = sec.querySelector(".cards");
+        for (const page of section.pages) {
+          const base = "view.html?d=" + encodeURIComponent(datasetId) + "&p=" + encodeURIComponent(page.id);
+          const pills = page.views.map(function (v, i) {
+            return '<a class="pill" href="' + base + '&v=' + i + '">' + v.label + '</a>';
+          }).join("");
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML =
+            '<a class="card-main" href="' + base + '&v=0">' +
+              glyphTpl +
+              '<div class="name">' + page.name + '</div>' +
+              '<div class="meta">' + page.meta + '</div>' +
+            '</a>' +
+            '<div class="pills">' + pills + '</div>';
+          cards.appendChild(card);
+        }
+        root.appendChild(sec);
+      }
+    }
+
+    function setDataset(datasetId, updateUrl) {
+      renderSections(datasetId);
+      if (updateUrl) {
+        try {
+          const url = new URL(location);
+          url.searchParams.set("d", datasetId);
+          history.replaceState(null, "", url);
+        } catch (e) { /* ignore */ }
+      }
+    }
+
+    dsSelect.addEventListener("change", function () { setDataset(dsSelect.value, true); });
+    setDataset(activeId, false);
   </script>
 </body>
 </html>
