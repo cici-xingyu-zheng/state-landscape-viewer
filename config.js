@@ -19,7 +19,7 @@ const SITE = {
   intro:
     'We apply the method developed in ' +
     //'<a href="#" target="_blank" rel="noopener">Zheng et al. 2026</a>' +
-    'Zheng et al. 2026' +
+    'Zheng et al. 2026 [will add link once we finished the manuscript]' +
     ' on Allen Brain datasets, including ' +
     '<a href="https://www.nature.com/articles/s41586-018-0654-5" target="_blank" rel="noopener">Tasic 2018</a>' +
     ' and ' +
