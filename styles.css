@@ -89,17 +89,6 @@ a { color: inherit; text-decoration: none; }
   text-transform: uppercase;
   color: var(--muted);
 }
-.masthead-row .eq { margin-top: 0; margin-left: auto; }
-.eq {
-  display: inline-block;
-  margin-top: 20px;
-  padding: 5px 12px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--card);
-  color: var(--muted);
-  font-size: 14px;
-}
 
 section.group { padding: 44px 0; border-bottom: 1px solid var(--line); }
 section.group:last-of-type { border-bottom: none; }

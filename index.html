@@ -19,7 +19,6 @@
           <label for="dataset-select">Dataset</label>
           <select id="dataset-select"></select>
         </div>
-        <span class="eq mono" id="site-eq"></span>
       </div>
     </div>
   </header>
@@ -43,7 +42,6 @@
   <script>
     document.getElementById("site-title").textContent = SITE.title;
     document.getElementById("site-intro").innerHTML = SITE.intro;
-    document.getElementById("site-eq").textContent = SITE.equation;
 
     const glyphTpl = document.getElementById("glyph").innerHTML;
     const root = document.getElementById("sections");

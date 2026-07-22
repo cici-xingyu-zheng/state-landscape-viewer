@@ -19,10 +19,13 @@ const SITE = {
   intro:
     'We apply the method developed in ' +
     '<a href="#" target="_blank" rel="noopener">Zheng et al. 2026</a>' +
-    ' on Allen Brain datasets, including Tasic 2018 and Yao 2023. This page hosts ' +
-    'visualizations for diffusion-map energy surfaces with cell populations projected on top.',
+    ' on Allen Brain datasets, including ' +
+    '<a href="https://www.nature.com/articles/s41586-018-0654-5" target="_blank" rel="noopener">Tasic 2018</a>' +
+    ' and ' +
+    '<a href="https://www.nature.com/articles/s41586-023-06812-z" target="_blank" rel="noopener">Yao 2023</a>' +
+    '. This page hosts visualizations for diffusion-map energy surfaces with cell populations projected on top.',
 
-  equation: "U(S) = \u2212log q(S)",
+  equation: "U(S) = \u2212log q(S)",  // (no longer displayed; kept for reference)
 
   // Caption shown on every viewer page (override per page with `instructions:`).
   instructions:
