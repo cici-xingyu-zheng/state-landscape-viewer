@@ -1,35 +1,55 @@
-# State Landscape Viewer
+# Interneuron State Landscapes
 
-Drop these four files into your `StateLandscapeViewer/` folder, right next to the
-existing `landscapes/` folder:
+Interactive 3D energy landscapes of cortical interneuron states, built from single-cell
+transcriptomic data.
+
+**[View the site →](https://cici-xingyu-zheng.github.io/state-landscape-viewer/)**
+
+## About
+
+We apply the method from Zheng et al. 2026 (manuscript in preparation) to two Allen
+Institute datasets from mouse primary visual cortex (VISp):
+
+- [Tasic et al. 2018](https://www.nature.com/articles/s41586-018-0654-5), Smart-seq
+- [Yao et al. 2023](https://www.nature.com/articles/s41586-023-06812-z), 10x v3
+
+Each landscape is an energy surface, *U(S) = −log q(S)*, over a 2D diffusion-map
+projection. The cell populations are plotted underneath it. Low regions of the surface
+are densely populated cell states, and ridges mark the transitions between them.
+
+The landscapes come at two levels of grouping:
+
+| Level | Landscapes | Colored by |
+|---|---|---|
+| Subclass | Sst, Vip | type |
+| Developmental origin | MGE, CGE (whole eminence lineage) | subclass or supertype (toggle inside the plot) |
+
+For each landscape you can switch between several diffusion-component projections
+(DC1–DC2, DC2–DC3, and others). The plots are interactive Plotly figures, so you can
+rotate, zoom, hover, and show or hide populations from the legend.
+
+## Repository structure
 
 ```
-StateLandscapeViewer/
-├── index.html      landing page   (don't edit)
-├── view.html       viewer page    (don't edit)
-├── config.js       ← edit this to add/rename views
-├── styles.css      look & feel
-└── landscapes/     your exported Plotly HTMLs (already here)
+├── index.html      landing page
+├── view.html       landscape viewer
+├── config.js       datasets, groupings, and projections shown on the site
+├── styles.css
+└── landscapes/
+    ├── tasic2018_visp/   exported Plotly HTML figures
+    └── yao2023_visp/
 ```
 
-`config.js` is already wired to your current 11 files. To add a projection later, add a
-`{ label, file }` line to the right page and drop the HTML into `landscapes/`. The first
-entry in each list is the default. Filenames are **case-sensitive** on GitHub Pages, so
-they must match exactly (`SST_DC12.html`, not `sst_DC12.html`).
+It's a static site with no build step. All of the site's structure comes from
+`config.js`, so adding a dataset or projection means adding an entry there and putting
+the matching HTML file in `landscapes/<dataset>/`.
 
-## Preview locally first
+To run it locally:
 
 ```bash
-cd StateLandscapeViewer
-python3 -m http.server 8000
-# open http://localhost:8000
+python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
-Use the server — don't double-click `index.html` (the `file://` protocol blocks part of
-the loading logic).
+## Citation
 
-## Publish on GitHub Pages
-
-See the chat message for the step-by-step. In short: create a GitHub repo, push this
-folder, then Settings → Pages → deploy from `main` / root. Live at
-`https://<you>.github.io/<repo>/`, and every push updates it.
+If you use these visualizations, please cite Zheng et al. 2026 (citation to come).
