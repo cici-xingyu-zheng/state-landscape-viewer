@@ -71,7 +71,7 @@ const SITE = {
              "with the cells drawn on the floor below and coloured by basin. Each subclass has two views, DC1\u2013DC2 and DC3\u2013DC4: " +
              "open one from the chips on its card, or switch with the Projection dropdown above the plot. " +
              "These are 2D projections of a higher-dimensional landscape, and smoothing flattens them, so barrier heights should not be read off the surface.",
-      accent: "teal",
+      accent: "navy",  // adds class accent-navy to the section; the colour itself is --accent in styles.css
       // `color` = Tasic 2018 subclass colour (Allen AIT29 table, column subclass_color); it tints the
       // top bar and ring icon of the card for both datasets.
       pages: [
