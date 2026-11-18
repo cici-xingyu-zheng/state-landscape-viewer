@@ -31,7 +31,10 @@ const SITE = {
     '. A manuscript is in preparation.',
 
   // Credit line under the intro (landing page).
-  credit: "Developed by Cici Xingyu Zheng and colleagues at the Allen Institute.",
+  credit:
+    'Developed by ' +
+    '<a href="https://alleninstitute.org/person/cici-xingyu-zheng" target="_blank" rel="noopener">CiCi Xingyu Zheng</a>' +
+    ' and colleagues at the Allen Institute.',
 
   equation: "U(S) = \u2212log q(S)",  // (no longer displayed; kept for reference)
 

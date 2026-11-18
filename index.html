@@ -50,7 +50,7 @@
     document.getElementById("site-intro").innerHTML = SITE.intro;
     if (SITE.credit) {
       const cr = document.getElementById("site-credit");
-      cr.textContent = SITE.credit;
+      cr.innerHTML = SITE.credit;
       cr.hidden = false;
     }
     if (SITE.banner) {
