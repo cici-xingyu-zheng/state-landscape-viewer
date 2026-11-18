@@ -84,6 +84,8 @@ a { color: inherit; text-decoration: none; }
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+.masthead .credit { margin-top: 12px; font-size: 14px; }
+.masthead .credit[hidden] { display: none; }
 .masthead-row {
   display: flex;
   align-items: center;
@@ -159,6 +161,12 @@ section.group:last-of-type { border-bottom: none; }
 }
 .card-main:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .card .glyph { color: var(--accent); }
+/* subclass colour (config.js `color`): 4 px bar along the top edge + tinted ring icon */
+.card.has-color { position: relative; overflow: hidden; }
+.card.has-color::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--sub);
+}
+.card.has-color .glyph { color: var(--sub); }
 .card .name {
   font-family: "Space Grotesk", sans-serif;
   font-weight: 600;
@@ -187,6 +195,16 @@ section.group:last-of-type { border-bottom: none; }
   padding: 34px 0 60px;
   color: var(--faint);
   font-size: 13px;
+}
+.foot .datacredit { margin-top: 14px; font-size: 12px; }
+.viewfoot {
+  flex: 0 0 auto;
+  padding: 6px 24px;
+  border-top: 1px solid var(--line);
+  background: var(--card);
+  color: var(--faint);
+  font-size: 12px;
+  text-align: center;
 }
 
 /* ======================================================================= */

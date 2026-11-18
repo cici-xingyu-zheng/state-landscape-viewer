@@ -30,6 +30,9 @@ const SITE = {
     '<a href="https://www.nature.com/articles/s41586-023-06812-z" target="_blank" rel="noopener">Yao 2023</a>' +
     '. A manuscript is in preparation.',
 
+  // Credit line under the intro (landing page).
+  credit: "Developed by Cici Xingyu Zheng and colleagues at the Allen Institute.",
+
   equation: "U(S) = \u2212log q(S)",  // (no longer displayed; kept for reference)
 
   // Caption shown on every viewer page (override per page with `instructions:`).
@@ -69,23 +72,25 @@ const SITE = {
              "open one from the chips on its card, or switch with the Projection dropdown above the plot. " +
              "These are 2D projections of a higher-dimensional landscape, and smoothing flattens them, so barrier heights should not be read off the surface.",
       accent: "teal",
+      // `color` = Tasic 2018 subclass colour (Allen AIT29 table, column subclass_color); it tints the
+      // top bar and ring icon of the card for both datasets.
       pages: [
         {
-          id: "sst", name: "Sst", meta: "MGE-derived; 5 basins, matched one-to-one across the two datasets",
+          id: "sst", name: "Sst", color: "#F15A29", meta: "MGE-derived; 5 basins, matched one-to-one across the two datasets",
           views: [
             { label: "DC1\u2013DC2", file: "SST_DC12.html" },
             { label: "DC3\u2013DC4", file: "SST_DC34.html" },
           ],
         },
         {
-          id: "vip", name: "Vip", meta: "CGE-derived",
+          id: "vip", name: "Vip", color: "#70559A", meta: "CGE-derived",
           views: [
             { label: "DC1\u2013DC2", file: "VIP_DC12.html" },
             { label: "DC3\u2013DC4", file: "VIP_DC34.html" },
           ],
         },
         {
-          id: "pvalb", name: "Pvalb", meta: "MGE-derived",
+          id: "pvalb", name: "Pvalb", color: "#D93137", meta: "MGE-derived",
           views: [
             { label: "DC1\u2013DC2", file: "PVALB_DC12.html" },
             { label: "DC3\u2013DC4", file: "PVALB_DC34.html" },

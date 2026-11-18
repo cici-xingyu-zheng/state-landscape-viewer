@@ -15,6 +15,7 @@
       <div class="banner" id="site-banner" hidden></div>
       <h1 id="site-title"></h1>
       <p class="intro" id="site-intro"></p>
+      <p class="credit" id="site-credit" hidden></p>
       <div class="masthead-row">
         <div class="dataset-picker">
           <label for="dataset-select">Dataset</label>
@@ -28,6 +29,10 @@
 
   <footer class="foot">
     <div class="wrap">Pick a dataset above, then click a card to open its default view or a chip to jump straight to that projection. Rotate, zoom, and hover any surface; toggle populations from the legend inside each plot.</div>
+    <div class="wrap datacredit">Data: Tasic et al. 2018; Yao et al. 2023 (Allen Institute).</div>
+    <!-- COPYRIGHT PLACEHOLDER: add the copyright line here, e.g.
+         <div class="wrap datacredit">(c) YEAR HOLDER</div>
+    -->
   </footer>
 
   <template id="glyph">
@@ -43,6 +48,11 @@
   <script>
     document.getElementById("site-title").textContent = SITE.title;
     document.getElementById("site-intro").innerHTML = SITE.intro;
+    if (SITE.credit) {
+      const cr = document.getElementById("site-credit");
+      cr.textContent = SITE.credit;
+      cr.hidden = false;
+    }
     if (SITE.banner) {
       const bn = document.getElementById("site-banner");
       const img = document.createElement("img");
@@ -93,6 +103,7 @@
           }).join("");
           const card = document.createElement("div");
           card.className = "card";
+          if (page.color) { card.classList.add("has-color"); card.style.setProperty("--sub", page.color); }
           card.innerHTML =
             '<a class="card-main" href="' + base + '&v=0">' +
               glyphTpl +
