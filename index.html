@@ -12,6 +12,7 @@
 <body>
   <header class="masthead">
     <div class="wrap">
+      <div class="banner" id="site-banner" hidden></div>
       <h1 id="site-title"></h1>
       <p class="intro" id="site-intro"></p>
       <div class="masthead-row">
@@ -42,6 +43,14 @@
   <script>
     document.getElementById("site-title").textContent = SITE.title;
     document.getElementById("site-intro").innerHTML = SITE.intro;
+    if (SITE.banner) {
+      const bn = document.getElementById("site-banner");
+      const img = document.createElement("img");
+      img.src = SITE.banner.src;
+      img.alt = SITE.banner.alt;
+      bn.appendChild(img);
+      bn.hidden = false;
+    }
 
     const glyphTpl = document.getElementById("glyph").innerHTML;
     const root = document.getElementById("sections");

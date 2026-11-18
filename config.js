@@ -14,17 +14,21 @@
 const SITE = {
   title: "Interneuron state landscapes",
 
-  // Landing-page intro paragraph. The citation is a PLACEHOLDER link —
-  // replace href="#" with the paper URL when it's available.
+  // Landing-page banner (shown in a white card above the title; landing page only).
+  banner: {
+    src: "assets/waddle_banner.jpg",
+    alt: "WADDLE: Wells And Diffusion Dynamics from Landscape Estimation",
+  },
+
+  // Landing-page intro paragraph.
   intro:
-    'We apply the method developed in ' +
-    //'<a href="#" target="_blank" rel="noopener">Zheng et al. 2026</a>' +
-    'Zheng et al. 2026 [will add link once we finished the manuscript]' +
-    ' on Allen Brain datasets, including ' +
+    'WADDLE (Wells And Diffusion Dynamics from Landscape Estimation) estimates an energy landscape ' +
+    'from single-cell RNA-seq data. Wells in the landscape mark candidate cell types. ' +
+    'This page shows landscapes for cortical interneurons from two Allen Institute datasets, ' +
     '<a href="https://www.nature.com/articles/s41586-018-0654-5" target="_blank" rel="noopener">Tasic 2018</a>' +
     ' and ' +
     '<a href="https://www.nature.com/articles/s41586-023-06812-z" target="_blank" rel="noopener">Yao 2023</a>' +
-    '. This page hosts visualizations for diffusion-map energy surfaces with cell populations projected on top.',
+    '. A manuscript is in preparation.',
 
   equation: "U(S) = \u2212log q(S)",  // (no longer displayed; kept for reference)
 
@@ -49,17 +53,20 @@ const SITE = {
       hint: "Buttons inside the plot: Basin, t-type, Supertype (mapped by MapMyCells)" },
     // Folder id kept as yao2023_visp so old links still resolve; the pages are 10x v2.
     { id: "yao2023_visp", name: "Yao 2023 VIS (10x v2)",
-      hint: "Buttons inside the plot: Basin, t-type (mapped from Tasic), Supertype" },
+      hint: "Buttons inside the plot: Basin, t-type (mapped from Tasic), Supertype",
+      // `meta` on a dataset replaces the card text of the named pages for that dataset only.
+      meta: { pvalb: "MGE-derived; energy heights are not comparable with Sst and Vip in this dataset" } },
   ],
 
   // Shared structure used by every dataset (unless a dataset defines its own).
   sections: [
     {
       id: "subclass",
-      eyebrow: "Poster-style landscapes",
+      eyebrow: "Energy landscapes",
       heading: "Subclass level",
-      blurb: "Each landscape shows one interneuron subclass. The surface is a kernel-smoothed energy U over two diffusion components, " +
-             "with the cells on the floor colored by basin. Use the dropdown to switch between DC1\u2013DC2 and DC3\u2013DC4. " +
+      blurb: "Each landscape shows one interneuron subclass. The surface is the energy U, smoothed over two diffusion components, " +
+             "with the cells drawn on the floor below and coloured by basin. Each subclass has two views, DC1\u2013DC2 and DC3\u2013DC4: " +
+             "open one from the chips on its card, or switch with the Projection dropdown above the plot. " +
              "These are 2D projections of a higher-dimensional landscape, and smoothing flattens them, so barrier heights should not be read off the surface.",
       accent: "teal",
       pages: [
@@ -78,7 +85,7 @@ const SITE = {
           ],
         },
         {
-          id: "pvalb", name: "Pvalb", meta: "MGE-derived; heights not comparable with Sst and Vip on 10x (smaller k/n)",
+          id: "pvalb", name: "Pvalb", meta: "MGE-derived",
           views: [
             { label: "DC1\u2013DC2", file: "PVALB_DC12.html" },
             { label: "DC3\u2013DC4", file: "PVALB_DC34.html" },
@@ -96,12 +103,13 @@ function getDataset(datasetId) {
 function getSections(dataset) {
   const base = dataset.sections || SITE.sections;
   const omit = dataset.omit || [];
-  if (!omit.length && !dataset.hint) return base;
+  if (!omit.length && !dataset.hint && !dataset.meta) return base;
   // Return filtered COPIES so the shared structure is never mutated.
   return base.map(function (section) {
     const pages = section.pages.map(function (page) {
       const views = page.views.filter(function (v) { return omit.indexOf(v.file) === -1; });
-      return Object.assign({}, page, { views: views, hint: page.hint || dataset.hint });
+      const meta = (dataset.meta && dataset.meta[page.id]) || page.meta;
+      return Object.assign({}, page, { views: views, hint: page.hint || dataset.hint, meta: meta });
     }).filter(function (page) { return page.views.length > 0; });
     return Object.assign({}, section, { pages: pages });
   });
