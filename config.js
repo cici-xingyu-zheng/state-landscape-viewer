@@ -38,28 +38,32 @@ const SITE = {
 
   equation: "U(S) = \u2212log q(S)",  // (no longer displayed; kept for reference)
 
-  // Caption shown on every viewer page (override per page with `instructions:`).
+  // Instruction bar shown on every viewer page (override per page with `instructions:`).
   instructions:
     "2D projection: smoothed energy surface on top, cells on the floor below. " +
     "Buttons above the plot recolor the cells: Basin, t-type, and Supertype (native on 10x v2; on Smart-seq, " +
     "\"Supertype (mapped)\" from MapMyCells). Dotted lines drop from the surface " +
-    "to each basin's lowest cell. In the legend, single-click an item to hide it; double-click to show it on its own. " +
-    "The line above the plot unfolds into the full caption.",
+    "to each basin's lowest cell. Height is the energy U relative to the lowest cell. " +
+    "In the legend, single-click an item to hide it; double-click to show it on its own.",
 
   // Order matters: the first dataset is the default selection.
-  // Pages added 2026-11-17 from StateDynamics-type: 10x v2 from results/261117/poster_html_landscapes/
-  // (script poster_2610_html_261117.py), Smart-seq from results/261117/poster_html_landscapes_t3b/
-  // (script poster_2610_html_t3b_261117.py). Both datasets have the same six files, so no
+  // Plot pages (no caption inside the page) generated 2026-11-18 in the StateDynamics-type project. Both datasets have the same six files, so no
   // `omit` list is needed. To hide a view a dataset lacks, add
   // omit: ["FILE.html", ...] to that dataset.
   datasets: [
-    // `hint` on a dataset is the line shown under the title on every viewer page of that dataset
-    // (a page can still override it with its own `hint`).
+    // Hint lines shown under the title on a viewer page, in this order:
+    //   dataset `hint` (the buttons line), then the page note (a page's own `note` in `sections`, or the
+    //   dataset's `notes[page id]`), then the dataset `confNote`.
     { id: "tasic2018_visp", name: "Tasic 2018 VISp (Smart-seq)",
-      hint: "Buttons inside the plot: Basin, t-type, Supertype (mapped by MapMyCells)" },
+      hint: "Buttons inside the plot: Basin, t-type, Supertype (mapped by MapMyCells)",
+      notes: { pvalb: "Pvalb Vipr2 is a separate type and is not drawn." },
+      confNote: "Cells below 0.8 mapping confidence are grey under Supertype (mapped)." },
     // Folder id kept as yao2023_visp so old links still resolve; the pages are 10x v2.
     { id: "yao2023_visp", name: "Yao 2023 VIS (10x v2)",
       hint: "Buttons inside the plot: Basin, t-type (mapped from Tasic), Supertype",
+      notes: { pvalb: "The chandelier cluster is a separate type and is not drawn. " +
+                      "Energy heights are not comparable with Sst and Vip in this dataset." },
+      confNote: "Cells below 0.8 mapping confidence are grey under t-type.",
       // `meta` on a dataset replaces the card text of the named pages for that dataset only.
       meta: { pvalb: "MGE-derived; energy heights are not comparable with Sst and Vip in this dataset" } },
   ],
@@ -80,6 +84,8 @@ const SITE = {
       pages: [
         {
           id: "sst", name: "Sst", color: "#F15A29", meta: "MGE-derived; 5 basins, matched one-to-one across the two datasets",
+          note: "Sst Chodl is a separate type and is not drawn. " +
+                "The two Hpse t-types are merged when matching basins across datasets.",
           views: [
             { label: "DC1\u2013DC2", file: "SST_DC12.html" },
             { label: "DC3\u2013DC4", file: "SST_DC34.html" },
@@ -111,13 +117,15 @@ function getDataset(datasetId) {
 function getSections(dataset) {
   const base = dataset.sections || SITE.sections;
   const omit = dataset.omit || [];
-  if (!omit.length && !dataset.hint && !dataset.meta) return base;
+  if (!omit.length && !dataset.hint && !dataset.meta && !dataset.notes && !dataset.confNote) return base;
   // Return filtered COPIES so the shared structure is never mutated.
   return base.map(function (section) {
     const pages = section.pages.map(function (page) {
       const views = page.views.filter(function (v) { return omit.indexOf(v.file) === -1; });
       const meta = (dataset.meta && dataset.meta[page.id]) || page.meta;
-      return Object.assign({}, page, { views: views, hint: page.hint || dataset.hint, meta: meta });
+      const note = page.note || (dataset.notes && dataset.notes[page.id]);
+      const hints = [page.hint || dataset.hint, note, dataset.confNote].filter(Boolean);
+      return Object.assign({}, page, { views: views, hint: hints.join(" "), hints: hints, meta: meta });
     }).filter(function (page) { return page.views.length > 0; });
     return Object.assign({}, section, { pages: pages });
   });

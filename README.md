@@ -34,8 +34,6 @@ two projections: DC1-DC2 and DC3-DC4 (diffusion components).
 Low-confidence mapped cells (below 0.80) are shown in light grey. MapMyCells maps to the
 whole-brain taxonomy, so a few Smart-seq cells map outside their subclass.
 
-The line above each plot unfolds into the full caption with the details.
-
 ## Reading the surfaces
 
 These are 2D projections of a higher-dimensional landscape, and smoothing flattens them,

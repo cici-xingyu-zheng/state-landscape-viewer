@@ -52,7 +52,14 @@
       document.title = page.name + " \u2014 " + dataset.name;
       document.getElementById("ctx").textContent = dataset.name + " \u00b7 " + section.heading;
       document.getElementById("pname").textContent = page.name;
-      if (page.hint) document.getElementById("hint").textContent = page.hint;
+      if (page.hints && page.hints.length) {
+        const hintEl = document.getElementById("hint");
+        page.hints.forEach(function (line) {
+          const s = document.createElement("span");
+          s.textContent = line;
+          hintEl.appendChild(s);
+        });
+      } else if (page.hint) document.getElementById("hint").textContent = page.hint;
       // keep the selected dataset when going back to the landing page
       document.querySelector(".back").href = "index.html?d=" + encodeURIComponent(dataset.id);
 
