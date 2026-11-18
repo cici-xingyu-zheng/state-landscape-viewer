@@ -43,9 +43,13 @@ const SITE = {
   // `omit` list is needed. To hide a view a dataset lacks, add
   // omit: ["FILE.html", ...] to that dataset.
   datasets: [
-    { id: "tasic2018_visp", name: "Tasic 2018 VISp (Smart-seq)" },
+    // `hint` on a dataset is the line shown under the title on every viewer page of that dataset
+    // (a page can still override it with its own `hint`).
+    { id: "tasic2018_visp", name: "Tasic 2018 VISp (Smart-seq)",
+      hint: "Buttons inside the plot: Basin, t-type, Supertype (mapped by MapMyCells)" },
     // Folder id kept as yao2023_visp so old links still resolve; the pages are 10x v2.
-    { id: "yao2023_visp", name: "Yao 2023 VIS (10x v2)" },
+    { id: "yao2023_visp", name: "Yao 2023 VIS (10x v2)",
+      hint: "Buttons inside the plot: Basin, t-type (mapped from Tasic), Supertype" },
   ],
 
   // Shared structure used by every dataset (unless a dataset defines its own).
@@ -61,7 +65,6 @@ const SITE = {
       pages: [
         {
           id: "sst", name: "Sst", meta: "MGE-derived; 5 basins, matched one-to-one across the two datasets",
-          hint: "Buttons inside the plot: Basin, t-type, Supertype (mapped by MapMyCells on Smart-seq)",
           views: [
             { label: "DC1\u2013DC2", file: "SST_DC12.html" },
             { label: "DC3\u2013DC4", file: "SST_DC34.html" },
@@ -69,7 +72,6 @@ const SITE = {
         },
         {
           id: "vip", name: "Vip", meta: "CGE-derived",
-          hint: "Buttons inside the plot: Basin, t-type, Supertype (mapped by MapMyCells on Smart-seq)",
           views: [
             { label: "DC1\u2013DC2", file: "VIP_DC12.html" },
             { label: "DC3\u2013DC4", file: "VIP_DC34.html" },
@@ -77,7 +79,6 @@ const SITE = {
         },
         {
           id: "pvalb", name: "Pvalb", meta: "MGE-derived; heights not comparable with Sst and Vip on 10x (smaller k/n)",
-          hint: "Buttons inside the plot: Basin, t-type, Supertype (mapped by MapMyCells on Smart-seq)",
           views: [
             { label: "DC1\u2013DC2", file: "PVALB_DC12.html" },
             { label: "DC3\u2013DC4", file: "PVALB_DC34.html" },
@@ -94,13 +95,13 @@ function getDataset(datasetId) {
 }
 function getSections(dataset) {
   const base = dataset.sections || SITE.sections;
-  if (!dataset.omit || !dataset.omit.length) return base;
-  const omit = dataset.omit;
+  const omit = dataset.omit || [];
+  if (!omit.length && !dataset.hint) return base;
   // Return filtered COPIES so the shared structure is never mutated.
   return base.map(function (section) {
     const pages = section.pages.map(function (page) {
       const views = page.views.filter(function (v) { return omit.indexOf(v.file) === -1; });
-      return Object.assign({}, page, { views: views });
+      return Object.assign({}, page, { views: views, hint: page.hint || dataset.hint });
     }).filter(function (page) { return page.views.length > 0; });
     return Object.assign({}, section, { pages: pages });
   });
