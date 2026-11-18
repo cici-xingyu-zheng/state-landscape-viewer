@@ -88,9 +88,16 @@
         const src = viewPath(dataset.id, view.file);
         stage.innerHTML = "";
         const iframe = document.createElement("iframe");
-        iframe.src = src;
+        // ?debug=1 on this page is passed on to the plot page (shows its diagnostic panel).
+        iframe.src = src + (params.get("debug") === "1" ? "?debug=1" : "");
         iframe.title = dataset.name + " \u2014 " + page.name + " \u2014 " + view.label;
-        stage.appendChild(iframe);
+        // The plot is a fixed 920 x 684 frame. On a narrower screen (e.g. an iPad held upright) the frame is
+        // scaled down as a whole inside a wrapper of the scaled size, so nothing is cut off or scrolls sideways.
+        const wrap = document.createElement("div");
+        wrap.className = "frame-wrap";
+        wrap.appendChild(iframe);
+        stage.appendChild(wrap);
+        fitFrame();
 
         // URL bookkeeping is guarded so a failure here can't stop the swap.
         try {
@@ -110,6 +117,18 @@
           })
           .catch(function () { /* offline / file:// - leave the iframe as-is */ });
       }
+
+      function fitFrame() {
+        const wrap = stage.querySelector(".frame-wrap");
+        if (!wrap) return;
+        const avail = stage.clientWidth - 40;           // stage padding is 20 px each side
+        const s = Math.max(0.3, Math.min(1, avail / 920));
+        wrap.style.width = Math.round(920 * s) + "px";
+        wrap.style.height = Math.round(684 * s) + "px";
+        wrap.firstChild.style.transform = s < 1 ? "scale(" + s + ")" : "";
+      }
+      window.addEventListener("resize", fitFrame);
+      window.addEventListener("orientationchange", function () { setTimeout(fitFrame, 300); });
 
       // Two listeners for belt-and-suspenders across browsers.
       select.addEventListener("change", function () { show(select.selectedIndex); });

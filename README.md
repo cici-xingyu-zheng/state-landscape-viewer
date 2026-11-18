@@ -50,6 +50,9 @@ index.html      landing page
 view.html       landscape viewer
 config.js       datasets, pages, and projections shown on the site
 styles.css
+assets/
+  waddle_banner.jpg
+  plotly-3.3.1.min.js   plotly.js, served from the site itself (no CDN)
 landscapes/
   tasic2018_visp/   Smart-seq pages (exported Plotly HTML)
   yao2023_visp/     10x v2 pages
@@ -58,6 +61,10 @@ landscapes/
 It is a static site with no build step. The site's structure comes from `config.js`:
 to add a page, add an entry there and put the matching HTML file in
 `landscapes/<dataset>/`.
+
+If a 3D view does not start on a device, the plot area says so. Add `&debug=1` to the
+viewer address (or `?debug=1` to a plot page) to see the browser details and the error on
+the page itself.
 
 To run it locally:
 
