@@ -30,69 +30,57 @@ const SITE = {
 
   // Caption shown on every viewer page (override per page with `instructions:`).
   instructions:
-    "2D projection: energy landscape on top, cell coordinates on the bottom. " +
-    "In the legend, single-click a type to hide it; double-click a type to highlight it on its own.",
+    "2D projection: smoothed energy surface on top, cells on the floor below. " +
+    "Buttons above the plot recolor the cells: Basin, t-type, and Supertype (native on 10x v2; on Smart-seq, " +
+    "\"Supertype (mapped)\" from MapMyCells). Dotted lines drop from the surface " +
+    "to each basin's lowest cell. In the legend, single-click an item to hide it; double-click to show it on its own. " +
+    "The line above the plot unfolds into the full caption.",
 
   // Order matters: the first dataset is the default selection.
+  // Pages added 2026-11-17 from StateDynamics-type: 10x v2 from results/261117/poster_html_landscapes/
+  // (script poster_2610_html_261117.py), Smart-seq from results/261117/poster_html_landscapes_t3b/
+  // (script poster_2610_html_t3b_261117.py). Both datasets have the same six files, so no
+  // `omit` list is needed. To hide a view a dataset lacks, add
+  // omit: ["FILE.html", ...] to that dataset.
   datasets: [
     { id: "tasic2018_visp", name: "Tasic 2018 VISp (Smart-seq)" },
-    // `omit` lists leaf filenames this dataset doesn't have yet; those views are
-    // dropped from its cards and dropdowns. Remove an entry once you add the file.
-    {
-      id: "yao2023_visp", name: "Yao 2023 VISp (10x-v3)",
-      omit: ["SST_DC34.html", "MGE_DC1DCk8_toggle.html", "CGE_DC1DCk19_toggle.html"],
-    },
+    // Folder id kept as yao2023_visp so old links still resolve; the pages are 10x v2.
+    { id: "yao2023_visp", name: "Yao 2023 VIS (10x v2)" },
   ],
 
   // Shared structure used by every dataset (unless a dataset defines its own).
   sections: [
     {
       id: "subclass",
-      eyebrow: "Grouping Level 1",
+      eyebrow: "Poster-style landscapes",
       heading: "Subclass level",
-      blurb: "Each landscape shows one interneuron subclass. Use the dropdown to change the diffusion-component projection.",
+      blurb: "Each landscape shows one interneuron subclass. The surface is a kernel-smoothed energy U over two diffusion components, " +
+             "with the cells on the floor colored by basin. Use the dropdown to switch between DC1\u2013DC2 and DC3\u2013DC4. " +
+             "These are 2D projections of a higher-dimensional landscape, and smoothing flattens them, so barrier heights should not be read off the surface.",
       accent: "teal",
       pages: [
         {
-          id: "sst", name: "Sst", meta: "MGE-derived",
+          id: "sst", name: "Sst", meta: "MGE-derived; 5 basins, matched one-to-one across the two datasets",
+          hint: "Buttons inside the plot: Basin, t-type, Supertype (mapped by MapMyCells on Smart-seq)",
           views: [
             { label: "DC1\u2013DC2", file: "SST_DC12.html" },
-            { label: "DC2\u2013DC3", file: "SST_DC23.html" },
             { label: "DC3\u2013DC4", file: "SST_DC34.html" },
           ],
         },
         {
           id: "vip", name: "Vip", meta: "CGE-derived",
+          hint: "Buttons inside the plot: Basin, t-type, Supertype (mapped by MapMyCells on Smart-seq)",
           views: [
             { label: "DC1\u2013DC2", file: "VIP_DC12.html" },
-            { label: "DC2\u2013DC3", file: "VIP_DC23.html" },
-          ],
-        },
-      ],
-    },
-    {
-      id: "origin",
-      eyebrow: "Grouping Level 2",
-      heading: "Same developmental origin",
-      blurb: "Each landscape pools an entire eminence lineage. The dropdown changes the projection; switch coloring by subclass vs supertype with the buttons inside the plot.",
-      accent: "amber",
-      pages: [
-        {
-          id: "mge", name: "MGE", meta: "Medial ganglionic eminence",
-          hint: "Subclass / supertype toggle is inside the plot",
-          views: [
-            { label: "DC1\u2013DC2",  file: "MGE_DC12_toggle.html" },
-            { label: "DC2\u2013DC3",  file: "MGE_DC23_toggle.html" },
-            { label: "DC1\u2013DCk8", file: "MGE_DC1DCk8_toggle.html" },
+            { label: "DC3\u2013DC4", file: "VIP_DC34.html" },
           ],
         },
         {
-          id: "cge", name: "CGE", meta: "Caudal ganglionic eminence",
-          hint: "Subclass / supertype toggle is inside the plot",
+          id: "pvalb", name: "Pvalb", meta: "MGE-derived; heights not comparable with Sst and Vip on 10x (smaller k/n)",
+          hint: "Buttons inside the plot: Basin, t-type, Supertype (mapped by MapMyCells on Smart-seq)",
           views: [
-            { label: "DC1\u2013DC2",   file: "CGE_DC12_toggle.html" },
-            { label: "DC2\u2013DC3",   file: "CGE_DC23_toggle.html" },
-            { label: "DC1\u2013DCk19", file: "CGE_DC1DCk19_toggle.html" },
+            { label: "DC1\u2013DC2", file: "PVALB_DC12.html" },
+            { label: "DC3\u2013DC4", file: "PVALB_DC34.html" },
           ],
         },
       ],
